@@ -1,11 +1,12 @@
 import socket
+import sys
 
 class URL:
     def __init__(self, url):
         self.url = url
         try:
-            assert self.scheme == "http"
-        except AssertionError as err:
+            assert self.scheme in ["http", "https"]
+        except AssertionError:
             print("http or https is required")
     
     @property
@@ -43,11 +44,16 @@ class URL:
 
 def main():
 
-    url = URL("http://browser.engineering/examples/example1-simple.html")
+    cli_args = sys.argv
 
-    print(url.request_data)
+    if len(cli_args) < 2:
+        print("Please enter a website as a commandline arg.")
 
-    print(url.make_request())
+    else:
+
+        url = URL(cli_args[1])
+
+        print(url.make_request())
 
 if __name__ == "__main__":
     main()
