@@ -48,6 +48,9 @@ def main():
 
     if len(cli_args) < 2:
         print("Please enter a website as a commandline arg.")
+    
+    elif len(cli_args) > 2:
+        print("Too many commandline args were entered.")
 
     else:
 
