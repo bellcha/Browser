@@ -1,0 +1,53 @@
+import socket
+
+class URL:
+    def __init__(self, url):
+        self.url = url
+        try:
+            assert self.scheme == "http"
+        except AssertionError as err:
+            print("http or https is required")
+    
+    @property
+    def scheme(self):
+        return self.url.split("://",1)[0]
+    
+    @property
+    def host(self):
+        parsed_url = self.url.split("://",1)[1]
+        hostname = parsed_url.split("/",1)[0]
+        return hostname
+
+    @property
+    def path(self):
+        parsed_url = self.url.split("://",1)[1]
+        path = parsed_url.split("/",1)[1]
+        return f"/{path}"
+    
+    @property
+    def request_data(self):
+        return f"GET {self.path} HTTP/1.0\r\nHost: {self.host}\r\n\r\n"
+    
+
+    def make_request(self):
+        s = socket.socket(
+            family=socket.AF_INET,
+            type=socket.SOCK_STREAM,
+            proto=socket.IPPROTO_TCP
+        )
+        s.connect((self.host, 80))
+        s.send(self.request_data.encode("utf8"))
+        response = s.makefile("r", encoding="utf8", newline="\r\n")
+        return response.read()
+
+
+def main():
+
+    url = URL("http://browser.engineering/examples/example1-simple.html")
+
+    print(url.request_data)
+
+    print(url.make_request())
+
+if __name__ == "__main__":
+    main()
